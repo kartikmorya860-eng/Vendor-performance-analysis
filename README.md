@@ -9,14 +9,17 @@ This project analyzes vendor performance data to provide insights into sales tre
 ## 📁 Project Files
 
 ### Notebooks
+
 - **Vendor Performance Analysis.ipynb** - Main analysis notebook with detailed vendor performance metrics and visualizations
 - **Exploratory Data Analysis.ipynb** - Initial data exploration and data quality assessment
 
 ### Scripts
+
 - **ingestion_db.py** - Data ingestion and database operations
 - **get_vendor_summary.py** - Vendor summary data generation and reporting
 
 ### Data & Reports
+
 - **vendor_sales_summary.csv** - Summary data of vendor sales
 - **Vendor Performance Report.pdf** - Detailed performance report
 - **vendor_performance.pbix** - Interactive Power BI dashboard
@@ -32,6 +35,7 @@ This project analyzes vendor performance data to provide insights into sales tre
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Python 3.x
 - Jupyter Notebook
 - Power BI Desktop (for `vendor_performance.pbix`)
@@ -40,12 +44,14 @@ This project analyzes vendor performance data to provide insights into sales tre
 ### Installation
 
 1. Clone this repository
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
    cd vender-analysis-project
    ```
 
 2. Install dependencies
+
    ```bash
    pip install pandas numpy matplotlib jupyter
    ```
@@ -58,11 +64,13 @@ This project analyzes vendor performance data to provide insights into sales tre
 ## 📈 Usage
 
 ### Running Analysis
+
 1. Open `Vendor Performance Analysis.ipynb` for the main analysis
 2. Open `Exploratory Data Analysis.ipynb` for initial data exploration
 3. Run cells sequentially to regenerate results and visualizations
 
 ### Using Python Scripts
+
 ```bash
 # Data ingestion
 python ingestion_db.py
@@ -72,6 +80,7 @@ python get_vendor_summary.py
 ```
 
 ### Power BI Dashboard
+
 1. Open `vendor_performance.pbix` in Power BI Desktop
 2. Refresh data connections to latest vendor data
 3. Explore interactive visualizations and KPIs
@@ -103,7 +112,7 @@ See `Vendor Performance Report.pdf` for detailed findings and insights from the 
 
 ## 👤 Author
 
-Vendor Analysis Project Team
+Kartik maurya , Anshuman rai
 
 ## 📄 License
 
