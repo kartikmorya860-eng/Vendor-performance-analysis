@@ -112,11 +112,9 @@ See `Vendor Performance Report.pdf` for detailed findings and insights from the 
 
 ## 👤 Author
 
-Kartik maurya , Anshuman rai
+Kartik
 
-## 📄 License
 
-This project is available for internal use.
 
 ---
 
