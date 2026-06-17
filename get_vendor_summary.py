@@ -21,7 +21,6 @@ def create_vendor_summary(conn):
         FROM vendor_invoice 
         GROUP BY VendorNumber
     ), 
-    
     PurchaseSummary AS (
         SELECT 
             p.VendorNumber,
@@ -39,7 +38,6 @@ def create_vendor_summary(conn):
         WHERE p.PurchasePrice > 0
         GROUP BY p.VendorNumber, p.VendorName, p.Brand, p.Description, p.PurchasePrice, pp.Price, pp.Volume
     ), 
-    
     SalesSummary AS (
         SELECT 
             VendorNo,
@@ -51,7 +49,6 @@ def create_vendor_summary(conn):
         FROM sales
         GROUP BY VendorNo, Brand
     ) 
-    
     SELECT 
         ps.VendorNumber,
         ps.VendorName,
@@ -74,10 +71,9 @@ def create_vendor_summary(conn):
     LEFT JOIN FreightSummary fs 
         ON ps.VendorNumber = fs.VendorNumber
     ORDER BY ps.TotalPurchaseDollars DESC""",conn)
-
     return vendor_sales_summary
 
-
+# Data cleaning .
 def clean_data(df):
     '''this function will clean the data'''
     # changing datatype to float
@@ -96,7 +92,6 @@ def clean_data(df):
     df['StockTurnover'] = df['TotalSalesQuantity'] / df['TotalPurchaseQuantity']
     df['SalesToPurchaseRatio'] = df['TotalSalesDollars'] / df['TotalPurchaseDollars']
 
-    
     return df
 
 if __name__ == '__main__':
