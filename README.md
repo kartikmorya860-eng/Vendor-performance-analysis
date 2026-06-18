@@ -13,6 +13,19 @@ This project analyzes vendor performance data to provide insights into sales tre
 - **Vendor Performance Analysis.ipynb** - Main analysis notebook with detailed vendor performance metrics and visualizations
 - **Exploratory Data Analysis.ipynb** - Initial data exploration and data quality assessment
 
+
+
+
+
+## 📸 Dashboard Preview
+
+![Vendor Performance Dashboard](assets/vendor_performance_dashboard.png)
+
+
+
+
+
+
 ### Scripts
 
 - **ingestion_db.py** - Data ingestion and database operations
@@ -112,8 +125,7 @@ See `Vendor Performance Report.pdf` for detailed findings and insights from the 
 
 ## 👤 Author
 
-Kartik
-
+Kartik Morya , Anshuman Rai 
 
 
 ---
