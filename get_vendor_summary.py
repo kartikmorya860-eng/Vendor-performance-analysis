@@ -1,11 +1,16 @@
 import sqlite3
 import pandas as pd
+import numpy as np
 import logging
+from pathlib import Path
+
+log_dir = Path("logs")
+log_dir.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
-    filename="logs/get_vendor_summary.log", 
+    filename=log_dir / "get_vendor_summary.log",
     level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s", 
-    filemode="a"  
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    filemode="a"
 )
 
 def ingest_db(df, table_name, engine):
@@ -76,21 +81,41 @@ def create_vendor_summary(conn):
 # Data cleaning .
 def clean_data(df):
     '''this function will clean the data'''
-    # changing datatype to float
-    df['Volume'] = df['Volume'].astype('float')
-    
+    if 'Volume' in df.columns:
+        df['Volume'] = pd.to_numeric(df['Volume'], errors='coerce').fillna(0.0)
+
+    # make sure numeric columns exist before arithmetic operations
+    for col in ['TotalSalesDollars', 'TotalPurchaseDollars', 'TotalSalesQuantity', 'TotalPurchaseQuantity']:
+        if col not in df.columns:
+            df[col] = 0
+        else:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
+
     # filling missing value with 0
-    df.fillna(0,inplace = True)
+    df.fillna(0, inplace=True)
     
     # removing spaces from categorical columns
-    df['VendorName'] = df['VendorName'].str.strip()
-    df['Description'] = df['Description'].str.strip()
+    for col in ['VendorName', 'Description']:
+        if col in df.columns:
+            df[col] = df[col].astype(str).str.strip()
 
     # creating new columns for better analysis
     df['GrossProfit'] = df['TotalSalesDollars'] - df['TotalPurchaseDollars']
-    df['ProfitMargin'] = (df['GrossProfit'] / df['TotalSalesDollars'])*100
-    df['StockTurnover'] = df['TotalSalesQuantity'] / df['TotalPurchaseQuantity']
-    df['SalesToPurchaseRatio'] = df['TotalSalesDollars'] / df['TotalPurchaseDollars']
+    df['ProfitMargin'] = np.where(
+        df['TotalSalesDollars'] != 0,
+        (df['GrossProfit'] / df['TotalSalesDollars']) * 100,
+        0.0
+    )
+    df['StockTurnover'] = np.where(
+        df['TotalPurchaseQuantity'] != 0,
+        df['TotalSalesQuantity'] / df['TotalPurchaseQuantity'],
+        0.0
+    )
+    df['SalesToPurchaseRatio'] = np.where(
+        df['TotalPurchaseDollars'] != 0,
+        df['TotalSalesDollars'] / df['TotalPurchaseDollars'],
+        0.0
+    )
 
     return df
 
