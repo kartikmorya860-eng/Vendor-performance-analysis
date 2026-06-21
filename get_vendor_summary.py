@@ -1,16 +1,11 @@
 import sqlite3
 import pandas as pd
-import numpy as np
 import logging
-from pathlib import Path
-
-log_dir = Path("logs")
-log_dir.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
-    filename=log_dir / "get_vendor_summary.log",
+    filename="logs/get_vendor_summary.log", 
     level=logging.DEBUG,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    filemode="a"
+    format="%(asctime)s - %(levelname)s - %(message)s", 
+    filemode="a"  
 )
 
 def ingest_db(df, table_name, engine):
@@ -26,6 +21,7 @@ def create_vendor_summary(conn):
         FROM vendor_invoice 
         GROUP BY VendorNumber
     ), 
+    
     PurchaseSummary AS (
         SELECT 
             p.VendorNumber,
@@ -43,6 +39,7 @@ def create_vendor_summary(conn):
         WHERE p.PurchasePrice > 0
         GROUP BY p.VendorNumber, p.VendorName, p.Brand, p.Description, p.PurchasePrice, pp.Price, pp.Volume
     ), 
+    
     SalesSummary AS (
         SELECT 
             VendorNo,
@@ -54,6 +51,7 @@ def create_vendor_summary(conn):
         FROM sales
         GROUP BY VendorNo, Brand
     ) 
+    
     SELECT 
         ps.VendorNumber,
         ps.VendorName,
@@ -76,47 +74,29 @@ def create_vendor_summary(conn):
     LEFT JOIN FreightSummary fs 
         ON ps.VendorNumber = fs.VendorNumber
     ORDER BY ps.TotalPurchaseDollars DESC""",conn)
+
     return vendor_sales_summary
 
-# Data cleaning .
+
 def clean_data(df):
     '''this function will clean the data'''
-    if 'Volume' in df.columns:
-        df['Volume'] = pd.to_numeric(df['Volume'], errors='coerce').fillna(0.0)
-
-    # make sure numeric columns exist before arithmetic operations
-    for col in ['TotalSalesDollars', 'TotalPurchaseDollars', 'TotalSalesQuantity', 'TotalPurchaseQuantity']:
-        if col not in df.columns:
-            df[col] = 0
-        else:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
-
+    # changing datatype to float
+    df['Volume'] = df['Volume'].astype('float')
+    
     # filling missing value with 0
-    df.fillna(0, inplace=True)
+    df.fillna(0,inplace = True)
     
     # removing spaces from categorical columns
-    for col in ['VendorName', 'Description']:
-        if col in df.columns:
-            df[col] = df[col].astype(str).str.strip()
+    df['VendorName'] = df['VendorName'].str.strip()
+    df['Description'] = df['Description'].str.strip()
 
     # creating new columns for better analysis
     df['GrossProfit'] = df['TotalSalesDollars'] - df['TotalPurchaseDollars']
-    df['ProfitMargin'] = np.where(
-        df['TotalSalesDollars'] != 0,
-        (df['GrossProfit'] / df['TotalSalesDollars']) * 100,
-        0.0
-    )
-    df['StockTurnover'] = np.where(
-        df['TotalPurchaseQuantity'] != 0,
-        df['TotalSalesQuantity'] / df['TotalPurchaseQuantity'],
-        0.0
-    )
-    df['SalesToPurchaseRatio'] = np.where(
-        df['TotalPurchaseDollars'] != 0,
-        df['TotalSalesDollars'] / df['TotalPurchaseDollars'],
-        0.0
-    )
+    df['ProfitMargin'] = (df['GrossProfit'] / df['TotalSalesDollars'])*100
+    df['StockTurnover'] = df['TotalSalesQuantity'] / df['TotalPurchaseQuantity']
+    df['SalesToPurchaseRatio'] = df['TotalSalesDollars'] / df['TotalPurchaseDollars']
 
+    
     return df
 
 if __name__ == '__main__':

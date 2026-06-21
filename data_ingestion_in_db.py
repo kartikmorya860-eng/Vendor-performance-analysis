@@ -24,9 +24,15 @@ def ingest_db(df, table_name, engine):
 def load_raw_data():
     '''this function will load the CSVs as dataframe and ingest into db'''
     data_dir = Path('data')
+    # fallback for archives that contain files under __MACOSX/data
     if not data_dir.exists():
-        logging.error('Data directory not found: %s', data_dir)
-        return
+        alt = Path('__MACOSX') / 'data'
+        if alt.exists():
+            logging.info('Using alternate data directory: %s', alt)
+            data_dir = alt
+        else:
+            logging.error('Data directory not found: %s', data_dir)
+            return
 
     start = time.time()
     for file in sorted(data_dir.iterdir()):
